@@ -8,7 +8,8 @@ import {
   Lock,
   Unlock,
   Sparkles,
-  Award
+  Award,
+  Flame
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -74,6 +75,19 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Navigation Tabs */}
         <nav className="flex space-x-1 sm:space-x-2 overflow-x-auto pb-3 pt-1 no-scrollbar border-t border-slate-800/80 mt-1">
+          <button
+            onClick={() => setActiveTab('bestseller')}
+            className={`flex items-center px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm transition-all whitespace-nowrap min-h-[44px] ${
+              activeTab === 'bestseller'
+                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30 font-bold'
+                : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+            }`}
+          >
+            <Flame className="w-4 h-4 mr-1.5 text-rose-500 fill-rose-500" />
+            예스24 베스트셀러
+            <span className="ml-1.5 px-1.5 py-0.2 rounded-md bg-rose-500/20 text-rose-300 text-[10px] font-bold border border-rose-500/30">HOT</span>
+          </button>
+
           <button
             onClick={() => setActiveTab('form')}
             className={`flex items-center px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm transition-all whitespace-nowrap min-h-[44px] ${

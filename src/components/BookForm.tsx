@@ -26,6 +26,7 @@ interface BookFormProps {
   defaultClassNum: string;
   onSubmitLog: (log: Omit<BookLog, 'id' | 'createdAt'>) => Promise<void>;
   isGasConnected: boolean;
+  initialBookData?: { title: string; author: string; publisher: string; category?: string } | null;
 }
 
 export const BookForm: React.FC<BookFormProps> = ({
@@ -33,17 +34,30 @@ export const BookForm: React.FC<BookFormProps> = ({
   defaultClassNum,
   onSubmitLog,
   isGasConnected,
+  initialBookData,
 }) => {
   const [grade, setGrade] = useState(defaultGrade || '5학년');
   const [classNum, setClassNum] = useState(defaultClassNum || '2반');
   const [studentName, setStudentName] = useState('');
-  const [bookTitle, setBookTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [publisher, setPublisher] = useState('');
-  const [category, setCategory] = useState('문학');
+  const [bookTitle, setBookTitle] = useState(initialBookData?.title || '');
+  const [author, setAuthor] = useState(initialBookData?.author || '');
+  const [publisher, setPublisher] = useState(initialBookData?.publisher || '');
+  const [category, setCategory] = useState(initialBookData?.category || '문학');
   const [rating, setRating] = useState(5);
   const [summary, setSummary] = useState('');
   const [reflection, setReflection] = useState('');
+
+  React.useEffect(() => {
+    if (initialBookData) {
+      if (initialBookData.title) setBookTitle(initialBookData.title);
+      if (initialBookData.author) setAuthor(initialBookData.author);
+      if (initialBookData.publisher) setPublisher(initialBookData.publisher);
+      if (initialBookData.category) {
+        // Map category if needed
+        setCategory(initialBookData.category.includes('어린이') || initialBookData.category.includes('소설') ? '문학' : initialBookData.category);
+      }
+    }
+  }, [initialBookData]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmittedSuccess, setIsSubmittedSuccess] = useState(false);

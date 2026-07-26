@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TabType, BookLog, AppSettings, ReadingKingRank } from './types';
+import { TabType, BookLog, AppSettings, ReadingKingRank, BestsellerBook } from './types';
 import {
   getStoredLogs,
   saveStoredLogs,
@@ -12,16 +12,18 @@ import { BookForm } from './components/BookForm';
 import { MyLogs } from './components/MyLogs';
 import { TeacherDashboard } from './components/TeacherDashboard';
 import { GoogleSheetSetup } from './components/GoogleSheetSetup';
+import { BestsellerList } from './components/BestsellerList';
 import { LogDetailModal } from './components/LogDetailModal';
 import { ReadingKingModal } from './components/ReadingKingModal';
 import { GrowthToast } from './components/GrowthToast';
 import { Sparkles, Heart } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<TabType>('form');
+  const [activeTab, setActiveTab] = useState<TabType>('bestseller');
   const [logs, setLogs] = useState<BookLog[]>([]);
   const [settings, setSettings] = useState<AppSettings>(getStoredSettings());
   const [isTeacherUnlocked, setIsTeacherUnlocked] = useState(false);
+  const [prefilledBook, setPrefilledBook] = useState<{ title: string; author: string; publisher: string; category?: string } | null>(null);
 
   // Modals and Toasts
   const [selectedLog, setSelectedLog] = useState<BookLog | null>(null);
@@ -116,6 +118,18 @@ export default function App() {
     settings.googleAppsScriptUrl && settings.googleAppsScriptUrl.trim().startsWith('http')
   );
 
+  // Select book from Bestseller list to write log
+  const handleSelectBookForLog = (book: BestsellerBook) => {
+    setPrefilledBook({
+      title: book.title,
+      author: book.author,
+      publisher: book.publisher,
+      category: book.category,
+    });
+    setActiveTab('form');
+    setToastMessage(`'${book.title}' 도서 정보가 독서록 작성 폼에 자동 입력되었습니다! 📖`);
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-indigo-500 selection:text-white flex flex-col justify-between">
       {/* App Header */}
@@ -131,12 +145,17 @@ export default function App() {
 
         {/* Main Content Area */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {activeTab === 'bestseller' && (
+            <BestsellerList onSelectBookForLog={handleSelectBookForLog} />
+          )}
+
           {activeTab === 'form' && (
             <BookForm
               defaultGrade={settings.defaultGrade}
               defaultClassNum={settings.defaultClassNum}
               onSubmitLog={handleSubmitLog}
               isGasConnected={isGasConnected}
+              initialBookData={prefilledBook}
             />
           )}
 
